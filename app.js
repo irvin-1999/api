@@ -1,10 +1,20 @@
 const express = require('express')
 const https = require('https')
+const bodyParser = require('body-parser')
 
 const app = express()
+app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
-    const url = 'https://api.openweathermap.org/data/2.5/weather?q=Pretoria&appid=1669d9d29189b4f96a963b840da91bb1&units=metric&zip=za'
+    res.sendFile(__dirname + '/index.html')
+})
+
+app.post('/', (req, res) => {
+
+    const query = req.body.cityName
+    const apiKey = '1669d9d29189b4f96a963b840da91bb1'
+    const unit = 'metric'
+    const url = 'https://api.openweathermap.org/data/2.5/weather?q=' + query + '&appid=' + apiKey + '&units=' + unit + '&zip=za'
     https.get(url, (response) => {
         console.log(response.statusCode)
 
@@ -16,7 +26,7 @@ app.get('/', (req, res) => {
             const imageUrl = 'https://openweathermap.org/img/wn/' + icon + '@2x.png'
 
             res.write('<p> The weather is currently: ' + description + '</p>')
-            res.write('<h1>The temperature in Pta is: ' + temp + ' degrees celcius</h1>')
+            res.write('<h1>The temperature in ' + query + ' is: ' + temp + ' degrees celcius</h1>')
             res.write('<img src=' + imageUrl + '')
         })
     })
